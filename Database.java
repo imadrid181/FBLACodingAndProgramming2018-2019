@@ -29,8 +29,13 @@ public class Database{
     public boolean put(Object o){
         if(o.equals(null))
             return false;
+
         if((this.spaceOccupied / this.capacity) > this.loadFactor)
             this.rehash();
+
+        if(this.contains(o) == false)
+            return false;
+            
         int position = o.hashCode() % this.capacity;
         while(this.array[position] != null){
             if(position >= this.capacity)
