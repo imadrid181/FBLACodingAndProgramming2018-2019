@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import javafx.scene.layout.Border;
 
 public class GUI extends Frame  {
     private Panel inputPanel;
@@ -13,11 +14,21 @@ public class GUI extends Frame  {
     private Checkbox redemptionStatusCheckBox;
     private Button addEBook;
 
-
+    private Panel DatabaseDisplay;
+    private int counter;
     private Database books;
+    private Label databaseName;
+    private Label nameLabel;
+    private Label classForLabel;
+    private Label redemptionCodeLabel;
+    private Label redemptionStatusLabel;
+    private Label ownerLabel;
+
+
 
     public GUI() {
         books = new Database(10);
+        counter = 1;
 
         setTitle("Database");
         setSize(1920,1080);
@@ -82,12 +93,29 @@ public class GUI extends Frame  {
                 if(sentinel == true)
                     return;
 
-                if(redemptionStatusCheckBox.getState() == false)  
-                    books.put(new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText()));
+                if(redemptionStatusCheckBox.getState() == false) {
+                    EBook inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText());
+                    books.put(inputedEBook);
+                    DatabaseDisplay.add(new Label(Integer.toString(counter)));
+                    DatabaseDisplay.add(new Label(inputedEBook.getBookName()));
+                    DatabaseDisplay.add(new Label(inputedEBook.getClassFor()));
+                    DatabaseDisplay.add(new Label(inputedEBook.getRedemptionCode()));
+                    DatabaseDisplay.add(new Label("False"));
+                    DatabaseDisplay.add(new Label("No Owner"));
+                    DatabaseDisplay.revalidate();
+                }
                 else {
                     EBook inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText());
-                    new addStudent(inputedEBook);
+                    addStudent finishedEBook = new addStudent(inputedEBook);
+                    inputedEBook = finishedEBook.getFinishedEBook();
                     books.put(inputedEBook);
+                    DatabaseDisplay.add(new Label(Integer.toString(counter)));
+                    DatabaseDisplay.add(new Label(inputedEBook.getBookName()));
+                    DatabaseDisplay.add(new Label(inputedEBook.getClassFor()));
+                    DatabaseDisplay.add(new Label(inputedEBook.getRedemptionCode()));
+                    DatabaseDisplay.add(new Label("True"));
+                    DatabaseDisplay.add(new Label(inputedEBook.getOwner().getName()));
+                    DatabaseDisplay.revalidate();
                 }
             }  
         }); 
@@ -97,7 +125,23 @@ public class GUI extends Frame  {
         add(inputPanel, BorderLayout.LINE_START);
         inputPanel.setVisible(true);
 
-        
+        DatabaseDisplay = new Panel(new GridLayout(0, 6));
+        databaseName = new Label("E-Books");
+        nameLabel = new Label("Name");
+        classForLabel = new Label("Class Book is For");
+        redemptionCodeLabel = new Label("Redemption Code");
+        redemptionStatusLabel = new Label("Redemption Status");
+        ownerLabel = new Label("Owner");
+
+        DatabaseDisplay.add(databaseName);
+        DatabaseDisplay.add(nameLabel);
+        DatabaseDisplay.add(classForLabel);
+        DatabaseDisplay.add(redemptionCodeLabel);
+        DatabaseDisplay.add(redemptionStatusLabel);
+        DatabaseDisplay.add(ownerLabel);
+        add(DatabaseDisplay, BorderLayout.CENTER);
+        DatabaseDisplay.setVisible(true);
+
     }
 
     private class addStudent extends Frame {
@@ -107,6 +151,7 @@ public class GUI extends Frame  {
         private Label gradeLevel;
         private TextField gradeLevelField;
         private Button addOwner;
+        private EBook finishedEBook;
 
         private addStudent(EBook inputedEBook) {
             setTitle("Student Input");
@@ -161,8 +206,10 @@ public class GUI extends Frame  {
                             return;
                         }
 
+                        finishedEBook = inputedEBook;
                         Student owner = new Student(studentNameField.getText(), gradeLevel);
-                        inputedEBook.setOwner(owner);
+                        finishedEBook.setOwner(owner);
+                        dispose();
                     } catch(Exception exception){
                         new errorWindow("Insert a number for grade level!");
                     } 
@@ -173,6 +220,11 @@ public class GUI extends Frame  {
             add(inputPanel);
             inputPanel.setVisible(true);
         }
+
+        public EBook getFinishedEBook(){
+            return this.finishedEBook;
+        }
+
     }
 
     private class errorWindow extends Frame{

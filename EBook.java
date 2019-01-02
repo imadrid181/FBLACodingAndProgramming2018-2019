@@ -134,8 +134,15 @@ public class EBook {
      * @return String containing all the information of the E-Book.
      */
     public String toString(){
-        String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode+". Redemption status is "
-                        +this.redemptionStatus+". The owner of the book is"+this.owner.getName();
-        return book;
+        if(!this.owner.equals(null)){
+            String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode+". Redemption status is "
+                            +this.redemptionStatus+". The owner of the book is"+this.owner.getName();
+            return book;
+        }
+        else{
+            String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode;
+            return book;
+        }
+        
     }    
 }
