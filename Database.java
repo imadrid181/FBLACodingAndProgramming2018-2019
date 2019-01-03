@@ -4,12 +4,14 @@ public class Database{
     private int capacity;
     private int spaceOccupied;
     private float loadFactor;
+    private Boolean isEmpty;
 
     public Database(){
         this.array = new Object[10];
         this.capacity = 10;
         this.spaceOccupied = 0;
         this.loadFactor = 0.75f;
+        this.isEmpty = false;
     }
 
     public Database(int capacity){
@@ -17,6 +19,7 @@ public class Database{
         this.capacity = capacity;
         this.spaceOccupied = 0;
         this.loadFactor = 0.75f;
+        this.isEmpty = true;
     }
 
     public Database(int capacity, float loadFactor){
@@ -24,12 +27,13 @@ public class Database{
         this.capacity = capacity;
         this.spaceOccupied = 0;
         this.loadFactor = 0.75f;
+        this.isEmpty = true;
     }
 
     public boolean put(Object o){
-        if(o.equals(null))
-            return false;
-
+        if(o == null)
+            return false;  
+            
         if((this.spaceOccupied / this.capacity) > this.loadFactor)
             this.rehash();
 
@@ -44,6 +48,7 @@ public class Database{
                 position++;
         }
         this.array[position] = o;
+        this.isEmpty = false;
         return true;
     }
 
@@ -65,16 +70,19 @@ public class Database{
     public boolean contains(Object o){
         if(o.equals(null))
             return false;
+        
+        if(this.isEmpty == true)
+            return false; 
 
         int position = o.hashCode() % this.capacity;
         while(this.array[position] != null){
-            if(position >= this.capacity)
-                position = 0;
             if(this.array[position].equals(o)){
                 return true;
             }
             else
                 position++;
+            if(position >= this.capacity)
+                position = 0;
         }
         return false;
     }
