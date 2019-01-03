@@ -8,6 +8,7 @@ public class EBook {
     private String redemptionCode;
     private boolean redemptionStatus;
     private Student owner;
+    private int rowLocation; 
 
     /** 
      *Default Constructor for an E-Book Object. Sets all elements to null and the boolean to false.
@@ -18,6 +19,7 @@ public class EBook {
         this.redemptionCode = null;
         this.redemptionStatus = false;
         this.owner = null;
+        this.rowLocation = 0;
     }
 
     /**
@@ -26,12 +28,13 @@ public class EBook {
      * @param classFor The name of the class that the E-Book is used for.
      * @param code The redemption code of the E-Book.
      */
-    public EBook(String name, String classFor, String code){
+    public EBook(String name, String classFor, String code, int rowLocation){
         this.bookName = name;
         this.classFor = classFor;
         this.redemptionCode = code;
         this.redemptionStatus = false;
         this.owner = null;
+        this.rowLocation = rowLocation;
     }
 
     /**
@@ -41,12 +44,13 @@ public class EBook {
      * @param code The redemption code of the E-Book.
      * @param owner The owner of the E-Book.
      */
-    public EBook(String name, String classFor, String code, Student owner){
+    public EBook(String name, String classFor, String code, Student owner, int rowLocation){
         this.bookName = name;
         this.classFor = classFor;
         this.redemptionCode = code;
         this.redemptionStatus = true;
         this.owner = owner;
+        this.rowLocation = rowLocation;
     }
 
     /**
@@ -89,6 +93,10 @@ public class EBook {
         return this.owner;
     }
 
+    public int getRowLocation(){
+        return this.rowLocation;
+    }
+
     /**
      * Changes the name of the E-Book
      * @param bookName The new name of the E-Book.
@@ -129,18 +137,22 @@ public class EBook {
         this.owner = owner;
     }
 
+    public void setRowLocation(int rowLocation){
+        this.rowLocation = rowLocation;
+    }
+
     /**
      * Returns all the information of the E-Book in a string.
      * @return String containing all the information of the E-Book.
      */
     public String toString(){
-        if(!this.owner.equals(null)){
+        if(this.owner != null){
             String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode+". Redemption status is "
                             +this.redemptionStatus+". The owner of the book is"+this.owner.getName();
             return book;
         }
         else{
-            String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode;
+            String book =  "Name: "+this.bookName+". Redemption code is: "+this.redemptionCode;
             return book;
         }
         
