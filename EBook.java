@@ -27,6 +27,7 @@ public class EBook {
      * @param name The name of the E-Book.
      * @param classFor The name of the class that the E-Book is used for.
      * @param code The redemption code of the E-Book.
+     * @param rowLocation The row that the E-Book will be shown in the JTable.
      */
     public EBook(String name, String classFor, String code, int rowLocation){
         this.bookName = name;
@@ -43,6 +44,7 @@ public class EBook {
      * @param classFor The name of the class that the E-Book is used for.
      * @param code The redemption code of the E-Book.
      * @param owner The owner of the E-Book.
+     * @param rowLocation The row that the E-Book will be shown in the JTable.
      */
     public EBook(String name, String classFor, String code, Student owner, int rowLocation){
         this.bookName = name;
@@ -51,6 +53,15 @@ public class EBook {
         this.redemptionStatus = true;
         this.owner = owner;
         this.rowLocation = rowLocation;
+    }
+
+    public EBook(String[] values, int rowNumber){
+        this.bookName = values[0].trim();
+        this.classFor = values[1].trim();
+        this.redemptionCode = values[2].trim();
+        this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
+        this.owner = new Student(values[4].trim(), Integer.parseInt(values[5].trim()));
+        this.rowLocation = rowNumber;
     }
 
     /**
@@ -93,6 +104,10 @@ public class EBook {
         return this.owner;
     }
 
+    /**
+     * Retrieves the row location of the E-Book.
+     * @return The row location of the E-Book.
+     */
     public int getRowLocation(){
         return this.rowLocation;
     }
@@ -137,8 +152,37 @@ public class EBook {
         this.owner = owner;
     }
 
+    /**
+     * Changes the row location of the E-Book.
+     * @param rowLocation The new row location of the E-Book.
+     */
     public void setRowLocation(int rowLocation){
         this.rowLocation = rowLocation;
+    }
+
+    /**
+     * Compares two E-Books to see if they are the same.
+     * @param s Another E-Book.
+     * @return True if E-Books are the same. False if E-Books are different.
+     */
+    public boolean equals(EBook s){
+        try{
+            if(this.bookName.equals(s.getBookName())){
+                if(this.classFor.equals(s.getClassFor())){
+                    if(this.redemptionCode.equals(s.getRedemptionCode())){
+                        if(this.redemptionStatus == s.getRedemptionStatus()){
+                            if(this.owner.equals(s.getOwner())){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        catch(Exception e){
+            return false;
+        }
     }
 
     /**
@@ -147,12 +191,11 @@ public class EBook {
      */
     public String toString(){
         if(this.owner != null){
-            String book =  "Name: "+this.bookName+". Book is for "+this.classFor+". Redemption code is "+this.redemptionCode+". Redemption status is "
-                            +this.redemptionStatus+". The owner of the book is"+this.owner.getName();
+            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus+", "+this.owner.toString();
             return book;
         }
         else{
-            String book =  "Name: "+this.bookName+". Redemption code is: "+this.redemptionCode;
+            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus+", No Owner, 0";
             return book;
         }
         
