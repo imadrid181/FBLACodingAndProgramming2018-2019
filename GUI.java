@@ -300,7 +300,7 @@ public class GUI extends Frame  {
                     Boolean sentinel = false;
                     try{
                         if(studentNameField.getText().equals("")){
-                            new errorWindow("Insert a name!");
+                            new errorWindow("Insert a name");
                             sentinel = true;
                         }
                         if(gradeLevelField.getText().equals("")){
@@ -328,6 +328,7 @@ public class GUI extends Frame  {
                                                 Integer.toString(inputedEBook.getOwner().getGradeLevel())};
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
                             table.addRow(rowData);     
+                            dispose();  
                         }
                         else {
                             books.remove(inputedEBook);
@@ -338,9 +339,10 @@ public class GUI extends Frame  {
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
                             table.setValueAt("true", inputedEBook.getRowLocation() - numberOfRowsRemoved, 3);   
                             table.setValueAt(owner.getName(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 4);   
-                            table.setValueAt(Integer.toString(inputedEBook.getOwner().getGradeLevel()), inputedEBook.getRowLocation() - numberOfRowsRemoved, 5);                       
+                            table.setValueAt(Integer.toString(inputedEBook.getOwner().getGradeLevel()), inputedEBook.getRowLocation() - numberOfRowsRemoved, 5);    
+                            dispose();                     
                         }
-                        dispose();                   
+                   
                     }catch(Exception exception){
                         new errorWindow("Grade Level must be a number");
                     }
@@ -387,6 +389,7 @@ public class GUI extends Frame  {
                     else {
                         inputedEBook = (EBook)listOfEBooks.getSelectedItem();
                         new addStudent(true);
+                        dispose();
                     }
                 }
             });
