@@ -1,14 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.LinkedList;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JComboBox;
-
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.Border;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
