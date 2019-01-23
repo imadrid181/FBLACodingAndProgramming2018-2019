@@ -54,14 +54,6 @@ public class Student {
     public void SetGradeLevel(int Grade){
         this.gradeLevel = Grade;
     }
-
-    /**
-     * Returns the position that the Student will be stored at in the Database.
-     * @return The hashCode of the name field.
-     */
-    public int hashCode(){
-       return this.name.hashCode();
-    }
     
     /**
      * Checks if the Student Object is equal to another Student Object by comparing all fields of the two objects.

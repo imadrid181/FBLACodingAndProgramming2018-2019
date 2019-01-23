@@ -39,7 +39,7 @@ public class EBook {
     }
 
     /**
-     * Constructs an E-Book Object for a E-Book that has been redemed and has an owner.
+     * Constructs an E-Book Object for a E-Book that has been redeemed and has an owner.
      * @param name The name of the E-Book.
      * @param classFor The name of the class that the E-Book is used for.
      * @param code The redemption code of the E-Book.
@@ -186,7 +186,7 @@ public class EBook {
     }
 
     /**
-     * Returns all the information of the E-Book in a string.
+     * Returns all the information of the E-Book in a string. Add information of Owner if there is a owner.
      * @return String containing all the information of the E-Book.
      */
     public String toString(){
@@ -195,7 +195,7 @@ public class EBook {
             return book;
         }
         else{
-            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus+", No Owner, 0";
+            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus;
             return book;
         }
         

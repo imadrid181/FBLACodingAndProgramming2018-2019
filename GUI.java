@@ -196,13 +196,16 @@ public class GUI extends Frame  {
                 new updateEBook();
             }
         });
-
+        /* The generate report button creates the report that reads the information from E-Books.txt
+         *
+         */
         generateReport = new Button("Generate Report");
-        generateReport.addActionListener(new ActionListener(){  
+        generateReport.addActionListener(new ActionListener(){
+
             public void actionPerformed(ActionEvent e){
-                try{
+                try {
                     this.makeReport();
-                }catch(Exception ex){
+                } catch(Exception ex){
                     ex.printStackTrace();
                 }
             }
@@ -214,10 +217,12 @@ public class GUI extends Frame  {
                 String current;
                 while((current = bookReader.readLine()) != null ){
                     String[] tokens = current.split(",");
-                    reportWriter.write(tokens[0]+" is assigned to "+tokens[4]+" who is in "+tokens[5]+" grade.");
+                    reportWriter.write(tokens[0]+" with code "+tokens[2]+"is assigned to "+tokens[4]+" who is in "+tokens[5]+" grade.");
                     reportWriter.write(System.lineSeparator());
                     reportWriter.flush();
                 }
+                reportWriter.close();
+                bookReader.close();
                 new reportWindow();
             }
         
