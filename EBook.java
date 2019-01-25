@@ -56,12 +56,22 @@ public class EBook {
     }
 
     public EBook(String[] values, int rowNumber){
-        this.bookName = values[0].trim();
-        this.classFor = values[1].trim();
-        this.redemptionCode = values[2].trim();
-        this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
-        this.owner = new Student(values[4].trim(), Integer.parseInt(values[5].trim()));
-        this.rowLocation = rowNumber;
+        if(values.length == 6){
+            this.bookName = values[0].trim();
+            this.classFor = values[1].trim();
+            this.redemptionCode = values[2].trim();
+            this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
+            this.owner = new Student(values[4].trim(), Integer.parseInt(values[5].trim()));
+            this.rowLocation = rowNumber;
+        }
+        else {
+            this.bookName = values[0].trim();
+            this.classFor = values[1].trim();
+            this.redemptionCode = values[2].trim();
+            this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
+            this.owner = new Student("No Owner", 0);
+            this.rowLocation = rowNumber;
+        }
     }
 
     /**

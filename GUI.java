@@ -137,7 +137,7 @@ public class GUI extends Frame  {
                     
                     if(redemptionStatusCheckBox.getState() == false) {
                         //Checks if redemption code is assigned to another E-Book since there cannot be any repeat redemption code.
-                        if(redemptionCodes.contains(redemptionCodeField.getText()+",")){
+                        if(books.searchForRedemptionCodes(redemptionCodeField.getText())) {
                             new errorWindow("Redemption Code is already asigned to a book");
                             return;
                         }
@@ -146,7 +146,6 @@ public class GUI extends Frame  {
                             inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText(), counter);
                             books.put(inputedEBook);
                             unredeemedEBooks.put(inputedEBook);
-                            redemptionCodes.put(redemptionCodeField.getText()+",");
                             Object rowData[] = {inputedEBook.getBookName(), inputedEBook.getClassFor(), inputedEBook.getRedemptionCode(), "false", "No Owner", "0"};
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
                             table.addRow(rowData);
@@ -155,14 +154,13 @@ public class GUI extends Frame  {
                     }
                     else {
                         //Checks if redemption code has already been assigned to another book.
-                        if(redemptionCodes.contains(redemptionCodeField.getText())){
+                        if(books.searchForRedemptionCodes(redemptionCodeField.getText())){
                             new errorWindow("Redemption Code is already asigned to a book");
                             return;
                         }
                         else{
                             //Creates instance of the frame that will allow the user to input the information for a student.
                             inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText(), counter);
-                            redemptionCodes.put(redemptionCode.getText()+",");
                             new addStudent(false);
                             counter++;
                         }
@@ -442,12 +440,12 @@ public class GUI extends Frame  {
                         else {
                             inputedEBook = (EBook)listOfEBooks.getSelectedItem();
                             books.remove(inputedEBook);
-                            redemptionCodes.remove(inputedEBook.getRedemptionCode()+",");
                             if(inputedEBook.getRedemptionStatus() == false)
                                 unredeemedEBooks.remove(inputedEBook);
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
                             table.removeRow(inputedEBook.getRowLocation() - numberOfRowsRemoved);
                             numberOfRowsRemoved++;
+                            dispose();
                         }
                     }catch(IOException ex){
                         ex.printStackTrace();
@@ -644,13 +642,11 @@ public class GUI extends Frame  {
                             if(redemptionStatusComboBox.getSelectedItem().equals("false")){
                                 EBook temp = (EBook)listOfEBooks.getSelectedItem();
                                 books.remove(temp);
-                                redemptionCodes.remove(temp.getRedemptionCode()+",");
                                 temp.setBookName(nameField.getText());
                                 temp.setClassFor(classForField.getText());
                                 temp.setRedemptionCode(redemptionCodeField.getText());
                                 temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                 books.put(temp);
-                                redemptionCodes.put(redemptionCodeField.getText()+",");
                                 DefaultTableModel table = (DefaultTableModel)database.getModel();
                                 table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                 table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);
@@ -685,15 +681,13 @@ public class GUI extends Frame  {
                                     return;
                                 }
                                 if(temp.getRedemptionStatus() == false){
-                                    redemptionCodes.remove(temp.getRedemptionCode()+",");
                                     unredeemedEBooks.remove(temp);
                                     temp.setBookName(nameField.getText());
                                     temp.setClassFor(classForField.getText());
                                     temp.setRedemptionCode(redemptionCodeField.getText());
                                     temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                     temp.setOwner(new Student(studentNameField.getText(), Integer.parseInt(gradeLevelField.getText())));
-                                    books.put(temp);
-                                    redemptionCodes.put(redemptionCodeField.getText()+",");
+                                    books.put(temp);                                    
                                     DefaultTableModel table = (DefaultTableModel)database.getModel();
                                     table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                     table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);
@@ -703,8 +697,7 @@ public class GUI extends Frame  {
                                     table.setValueAt(gradeLevelField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 5);
                                     dispose();
                                 }
-                                else {
-                                    redemptionCodes.remove(temp.getRedemptionCode()+",");
+                                else {                                  
                                     temp.setBookName(nameField.getText());
                                     temp.setClassFor(classForField.getText());
                                     temp.setRedemptionCode(redemptionCodeField.getText());
@@ -712,7 +705,6 @@ public class GUI extends Frame  {
                                     temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                     temp.setOwner(new Student(studentNameField.getText(), Integer.parseInt(gradeLevelField.getText())));
                                     books.put(temp);
-                                    redemptionCodes.put(redemptionCodeField.getText()+",");
                                     DefaultTableModel table = (DefaultTableModel)database.getModel();
                                     table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                     table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);

@@ -28,10 +28,6 @@ public class Database {
         this.spaceOccupied = 0;
         this.isEmpty = false;
         this.storage = new File("Default.txt");
-        this.fw = new FileWriter(this.storage, true);
-        this.output = new BufferedWriter(fw);
-        this.fr = new FileReader(this.storage);
-        this.reader = new BufferedReader(fr);
     }
 
     /**
@@ -47,10 +43,6 @@ public class Database {
         this.spaceOccupied = 0;
         this.isEmpty = false;
         this.storage = new File(fileName+".txt");
-        this.fw = new FileWriter(storage, true);
-        this.output = new BufferedWriter(fw);
-        this.fr = new FileReader(storage);
-        this.reader =  new BufferedReader(fr);
     }
 
     /**
@@ -98,13 +90,17 @@ public class Database {
         if(this.isEmpty == false) {
             this.isEmpty = true;
         }
-            
+        
+        fw = new FileWriter(this.storage, true);
+        output = new BufferedWriter(fw);
+
         this.listObject.add(e);
         this.spaceOccupied++;
 
-        this.output.write(e.toString());
-        this.output.write(System.lineSeparator());
-        this.output.flush();
+        output.write(e.toString());
+        output.write(System.lineSeparator());
+        output.flush();
+        output.close();
         return true;
     }
 
@@ -138,39 +134,47 @@ public class Database {
             return false;
 
         else {
-            File originalFile = new File("Temp.txt");
-            BufferedWriter originalFileWriter = new BufferedWriter(new FileWriter(originalFile));
-            String tempLine;
-            while((tempLine = reader.readLine()) != null){
-                String line = tempLine.trim();
-                originalFileWriter.write(line);
-                originalFileWriter.write(System.lineSeparator());
-                originalFileWriter.flush();
-            }
-            originalFileWriter.close();
+            fr = new FileReader(this.storage);
+            reader = new BufferedReader(fr);
             
-            BufferedReader originalFileReader = new BufferedReader(new FileReader(originalFile));
-            File tempFile = new File(storage.getName());
+            File tempFile = new File("Temp.txt");
+            
             BufferedWriter tempWritter = new BufferedWriter(new FileWriter(tempFile));
+
             String lineToRemove = o.toString();
             String currentLine;
 
-            while((currentLine = originalFileReader.readLine()) != null){
+            while((currentLine = reader.readLine().trim()) != null){
                 String line = currentLine.trim();
                 if(!line.equals(lineToRemove)) {
                     tempWritter.write(currentLine);
                     tempWritter.write(System.lineSeparator());
                 }
             }
-            originalFileReader.close();
+
             tempWritter.close();
-            tempFile.renameTo(this.storage);
+            reader.close();
+            System.out.println(tempFile.renameTo(this.storage));
             this.storage = tempFile;
+
             this.listObject.remove(o);
             this.spaceOccupied--;
             return true;
         }
         
+    }
+
+    public boolean searchForRedemptionCodes(String redemptionCode) {
+        if(this.isEmpty)
+            return false;
+        else {
+            for(int i = 0; i < this.listObject.size(); i++) {
+                String temp = this.listObject.get(i).getRedemptionCode();
+                if(temp.equals(redemptionCode))
+                    return true;
+            }
+            return false;
+        }
     }
     
     /**
@@ -181,7 +185,6 @@ public class Database {
      */
     public int populateFromFile(String FileName) throws IOException {
         try {
-
             File inputFile = new File(FileName);
             BufferedReader tempReader = new BufferedReader(new FileReader(inputFile));
             String currentLine;
@@ -189,7 +192,12 @@ public class Database {
             while((currentLine = tempReader.readLine()) != null){
                 String[] values = currentLine.split(",");
 
-                if(values.length > 1) {
+                if(values.length == 6) {
+                    EBook temp = new EBook(values, this.spaceOccupied);
+                    this.listObject.add(temp);
+                    this.spaceOccupied++;
+                }
+                else {
                     EBook temp = new EBook(values, this.spaceOccupied);
                     this.listObject.add(temp);
                     this.spaceOccupied++;
