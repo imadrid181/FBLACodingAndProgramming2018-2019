@@ -109,12 +109,11 @@ public class Database {
     }
 
     /**
-     * 
-     * @param e
-     * @return
-     * @throws IOException
+     * Searches the Linked List to see if a specific EBook is in it.
+     * @param e The EBook that will be checked to see if it is in the Linked List.
+     * @return True if the EBook is in the Linked List. False if it is not.
      */
-    public boolean contains(EBook e) throws IOException{
+    public boolean contains(EBook e) {
         if(e.equals(null))
             return false;
         
@@ -128,12 +127,16 @@ public class Database {
             return false;
     }
 
-    public boolean remove(Object o) throws IOException{
+    /**
+     * ISSUE. LOOK MORE INTO IT
+     */
+    public boolean remove(EBook o) throws IOException{
         if(o.equals(null))
             return false;
 
         if(!this.listObject.contains(o))
             return false;
+
         else {
             File originalFile = new File("Temp.txt");
             BufferedWriter originalFileWriter = new BufferedWriter(new FileWriter(originalFile));
@@ -159,6 +162,7 @@ public class Database {
                     tempWritter.write(System.lineSeparator());
                 }
             }
+            originalFileReader.close();
             tempWritter.close();
             tempFile.renameTo(this.storage);
             this.storage = tempFile;
