@@ -39,7 +39,7 @@ public class EBook {
     }
 
     /**
-     * Constructs an E-Book Object for a E-Book that has been redeemed and has an owner.
+     * Constructs an E-Book Object for a E-Book that has been redemed and has an owner.
      * @param name The name of the E-Book.
      * @param classFor The name of the class that the E-Book is used for.
      * @param code The redemption code of the E-Book.
@@ -56,22 +56,12 @@ public class EBook {
     }
 
     public EBook(String[] values, int rowNumber){
-        if(values.length == 6){
-            this.bookName = values[0].trim();
-            this.classFor = values[1].trim();
-            this.redemptionCode = values[2].trim();
-            this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
-            this.owner = new Student(values[4].trim(), Integer.parseInt(values[5].trim()));
-            this.rowLocation = rowNumber;
-        }
-        else {
-            this.bookName = values[0].trim();
-            this.classFor = values[1].trim();
-            this.redemptionCode = values[2].trim();
-            this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
-            this.owner = new Student("No Owner", 0);
-            this.rowLocation = rowNumber;
-        }
+        this.bookName = values[0].trim();
+        this.classFor = values[1].trim();
+        this.redemptionCode = values[2].trim();
+        this.redemptionStatus = Boolean.parseBoolean(values[3].trim());
+        this.owner = new Student(values[4].trim(), Integer.parseInt(values[5].trim()));
+        this.rowLocation = rowNumber;
     }
 
     /**
@@ -196,7 +186,7 @@ public class EBook {
     }
 
     /**
-     * Returns all the information of the E-Book in a string. Add information of Owner if there is a owner.
+     * Returns all the information of the E-Book in a string.
      * @return String containing all the information of the E-Book.
      */
     public String toString(){
@@ -205,7 +195,7 @@ public class EBook {
             return book;
         }
         else{
-            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus;
+            String book =  this.bookName+", "+this.classFor+", "+this.redemptionCode+", "+this.redemptionStatus+", No Owner, 0";
             return book;
         }
         

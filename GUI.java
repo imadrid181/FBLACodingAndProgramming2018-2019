@@ -137,7 +137,7 @@ public class GUI extends Frame  {
                     
                     if(redemptionStatusCheckBox.getState() == false) {
                         //Checks if redemption code is assigned to another E-Book since there cannot be any repeat redemption code.
-                        if(books.searchForRedemptionCodes(redemptionCodeField.getText())) {
+                        if(redemptionCodes.contains(redemptionCodeField.getText()+",")){
                             new errorWindow("Redemption Code is already asigned to a book");
                             return;
                         }
@@ -146,6 +146,7 @@ public class GUI extends Frame  {
                             inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText(), counter);
                             books.put(inputedEBook);
                             unredeemedEBooks.put(inputedEBook);
+                            redemptionCodes.put(redemptionCodeField.getText()+",");
                             Object rowData[] = {inputedEBook.getBookName(), inputedEBook.getClassFor(), inputedEBook.getRedemptionCode(), "false", "No Owner", "0"};
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
                             table.addRow(rowData);
@@ -154,13 +155,14 @@ public class GUI extends Frame  {
                     }
                     else {
                         //Checks if redemption code has already been assigned to another book.
-                        if(books.searchForRedemptionCodes(redemptionCodeField.getText())){
+                        if(redemptionCodes.contains(redemptionCodeField.getText())){
                             new errorWindow("Redemption Code is already asigned to a book");
                             return;
                         }
                         else{
                             //Creates instance of the frame that will allow the user to input the information for a student.
                             inputedEBook = new EBook(nameField.getText(), classForField.getText(), redemptionCodeField.getText(), counter);
+                            redemptionCodes.put(redemptionCode.getText()+",");
                             new addStudent(false);
                             counter++;
                         }
@@ -194,20 +196,19 @@ public class GUI extends Frame  {
                 new updateEBook();
             }
         });
-        /* The generate report button creates the report that reads the information from E-Books.txt
-         *
-         */
-        generateReport = new Button("Generate Report");
-        generateReport.addActionListener(new ActionListener(){
 
+        //Button that will generate the report for all the E-Books addded.
+        generateReport = new Button("Generate Report");
+        generateReport.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){
-                try {
+                try{
                     this.makeReport();
-                } catch(Exception ex){
+                }catch(Exception ex){
                     ex.printStackTrace();
                 }
             }
 
+            //Creates a report file and creates the report based on the information in E-Books.txt
             public void makeReport() throws IOException{
                 File report = new File("Report.txt");
                 BufferedWriter reportWriter = new BufferedWriter(new FileWriter(report));
@@ -215,7 +216,8 @@ public class GUI extends Frame  {
                 String current;
                 while((current = bookReader.readLine()) != null ){
                     String[] tokens = current.split(",");
-                    reportWriter.write(tokens[0]+" with code "+tokens[2]+"is assigned to "+tokens[4]+" who is in "+tokens[5]+" grade.");
+                    reportWriter.write(tokens[0].trim()+" for "+tokens[1].trim()+" with redemption Code "+tokens[2].trim()+
+                                       "is assigned to "+tokens[4].trim()+" who is in "+tokens[5].trim()+" grade.");
                     reportWriter.write(System.lineSeparator());
                     reportWriter.flush();
                 }
@@ -267,7 +269,7 @@ public class GUI extends Frame  {
         private Button addOwner;
         private Student owner;
 
-
+        //Creation of all the components for the frame.
         private addStudent(Boolean bookAlreadyExisted) {
             setTitle("Student Input");
             setSize(1920,1080);
@@ -296,11 +298,13 @@ public class GUI extends Frame  {
             gradeLevelField = new TextField(10);
             gradeLevelField.setEditable(true);
             inputPanel.add(gradeLevelField);
-
+            
+            //Button that adds the owner to an E-Book.
             addOwner = new Button("Add Owner");
             addOwner.addActionListener(new ActionListener(){  
                 public void actionPerformed(ActionEvent e){
                     Boolean sentinel = false;
+                    //Checks if all the information inputed is appropiate. 
                     try{
                         if(studentNameField.getText().equals("")){
                             new errorWindow("Insert a name");
@@ -314,7 +318,7 @@ public class GUI extends Frame  {
                     
                         int gradeLevel = Integer.parseInt(gradeLevelField.getText().trim());
                         if(gradeLevel < 1 || gradeLevel > 12){
-                            new errorWindow("Grade Level should be between 1 and 12th");
+                            new errorWindow("Grade Level should be between 1 and 12");
                             sentinel = true;
                         }
 
@@ -323,6 +327,7 @@ public class GUI extends Frame  {
                         }
 
                         owner = new Student(studentNameField.getText(), gradeLevel);
+                        //Creates a E-Book with the specifeid owner if the E-Book did not already exist.
                         if(bookAlreadyExisted == false){
                             inputedEBook.setRedemptionStatus(true);
                             inputedEBook.setOwner(owner);
@@ -334,6 +339,7 @@ public class GUI extends Frame  {
                             dispose();  
                         }
                         else {
+                            //Adds the owner to an already existing 
                             books.remove(inputedEBook);
                             unredeemedEBooks.remove(inputedEBook);
                             inputedEBook.setRedemptionStatus(true);
@@ -358,12 +364,14 @@ public class GUI extends Frame  {
         }
     }
 
+    //Add owner window that is used to add a owner to a specific E-Book.
     private class addOwner extends Frame {
         private Panel display;
         private Label Ebook;
         private JComboBox listOfEBooks;
         private Button addOwnerOfSelectedEBook;
 
+        //Creates the frame. panels, and ComboBox.
         private addOwner() {
             setTitle("Add Owner");
             setSize(1920,1080);
@@ -377,6 +385,7 @@ public class GUI extends Frame  {
             });
 
             display = new Panel();
+            //Fills the ComboBox with all of hte E-Books.
             Ebook = new Label("Pick a E-Book to assign an Owner:");
             EBook[] listOfUnredeemedEBooks = new EBook[unredeemedEBooks.getSpaceOccupied()];
             for(int i = 0; i < unredeemedEBooks.getSpaceOccupied(); i++) {
@@ -384,6 +393,7 @@ public class GUI extends Frame  {
             }
             listOfEBooks = new JComboBox<EBook>(listOfUnredeemedEBooks);
             
+            //Button to add owner, gives error if nothing is selected.
             addOwnerOfSelectedEBook = new Button("Add Owner");
             addOwnerOfSelectedEBook.addActionListener(new ActionListener(){  
                 public void actionPerformed(ActionEvent e){
@@ -405,12 +415,14 @@ public class GUI extends Frame  {
         }
     }
 
+    //The frame that allows the user to remove a E-Book.
     private class removeRow extends Frame {
         private Panel display;
         private Label Ebook;
         private JComboBox listOfEBooks;
         private Button removeEBook;
 
+        //Creates Frame to remove E-Book.
         private removeRow(){
             setTitle("Remove E-Book");
             setSize(1920,1080);
@@ -423,6 +435,7 @@ public class GUI extends Frame  {
                 }    
             });
 
+            //Fills the ComboBox with all of the E-Books. 
             display = new Panel();
             Ebook = new Label("Pick a E-Book to remove:");
             EBook[] listOfEBook = new EBook[books.getSpaceOccupied()];
@@ -431,6 +444,7 @@ public class GUI extends Frame  {
             }
             listOfEBooks = new JComboBox<EBook>(listOfEBook);
             
+            //Creates the Button to remove a E-Book.
             removeEBook = new Button("Remove");
             removeEBook.addActionListener(new ActionListener(){  
                 public void actionPerformed(ActionEvent e){
@@ -438,8 +452,10 @@ public class GUI extends Frame  {
                         if(listOfEBooks.getSelectedItem() == null)
                             new errorWindow("No E-Book was selected");
                         else {
+                            //Removes E-book from the JTable and the Database.
                             inputedEBook = (EBook)listOfEBooks.getSelectedItem();
                             books.remove(inputedEBook);
+                            redemptionCodes.remove(inputedEBook.getRedemptionCode()+",");
                             if(inputedEBook.getRedemptionStatus() == false)
                                 unredeemedEBooks.remove(inputedEBook);
                             DefaultTableModel table = (DefaultTableModel)database.getModel();
@@ -461,6 +477,7 @@ public class GUI extends Frame  {
         }
     }
 
+    //Frame to update the information of an E-Book.
     private class updateEBook extends Frame {
         private Panel display;
         private Label Ebook;
@@ -483,6 +500,7 @@ public class GUI extends Frame  {
         private Label gradeLevel;
         private TextField gradeLevelField;
 
+        //Creates the frame, labels, and ComboBox.
         private updateEBook() {
             setTitle("Update E-Book");
             setSize(1920,1080);
@@ -495,6 +513,7 @@ public class GUI extends Frame  {
                 }    
             });
 
+            //Fills ComboBox with all of E-Books.
             display = new Panel();
             Ebook = new Label("Pick a E-Book to update:");
             EBook[] arrayOfEBooks = new EBook[books.getSpaceOccupied()];
@@ -503,6 +522,7 @@ public class GUI extends Frame  {
                     arrayOfEBooks[i] = (EBook)books.get(i);
             }
 
+            //Sets the textFields of with the information from the selected item in the ComboBox.
             listOfEBooks = new JComboBox<EBook>(arrayOfEBooks);
             listOfEBooks.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
@@ -519,14 +539,17 @@ public class GUI extends Frame  {
                 }
             });
 
+            //Creates the panel for updating the owner.
             updateStudentPanel = new Panel(new GridLayout(2,2));
             studentName = new Label("Student Name: ");
             studentNameField = new TextField();
             gradeLevel = new Label("Grade Level: ");
             gradeLevelField = new TextField();
 
+            //Adds the Labels and TextFields to the updatePanel.
             updatePanel = new Panel(new GridLayout(4, 2));
             EBook temp = (EBook)listOfEBooks.getSelectedItem();
+            //Labels and TextFields if the E-Book selected exist.
             if(temp != null){
                 name = new Label("Name: ");
                 nameField = new TextField(temp.getBookName());
@@ -568,6 +591,7 @@ public class GUI extends Frame  {
                     updateStudentPanel.revalidate();
                 }
             }
+            //Labels and TextFields if the E-Book selected does not exist.
             else{
                 name = new Label("Name: ");
                 nameField = new TextField("");
@@ -611,10 +635,11 @@ public class GUI extends Frame  {
             updateStudentPanel.add(gradeLevel);
             updateStudentPanel.add(gradeLevelField);
 
-
+            //Button that confirms the updating of the E-Book.
             update = new Button("Update");
             update.addActionListener(new ActionListener(){  
                 public void actionPerformed(ActionEvent e){
+                    //Checks to see if the inputs are appropiate.
                     boolean sentinel = false;
                     try{
                         if(listOfEBooks.getSelectedItem() == null) {
@@ -639,14 +664,17 @@ public class GUI extends Frame  {
                             return;
                         }
                         else {
+                            //Updates the E-Book when it is set to have no owner.
                             if(redemptionStatusComboBox.getSelectedItem().equals("false")){
                                 EBook temp = (EBook)listOfEBooks.getSelectedItem();
                                 books.remove(temp);
+                                redemptionCodes.remove(temp.getRedemptionCode()+",");
                                 temp.setBookName(nameField.getText());
                                 temp.setClassFor(classForField.getText());
                                 temp.setRedemptionCode(redemptionCodeField.getText());
                                 temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                 books.put(temp);
+                                redemptionCodes.put(redemptionCodeField.getText()+",");
                                 DefaultTableModel table = (DefaultTableModel)database.getModel();
                                 table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                 table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);
@@ -655,6 +683,7 @@ public class GUI extends Frame  {
                                 dispose();
                             }
                             else {
+                                //Checks to see if the inputed changes are appropiate.
                                 EBook temp = (EBook)listOfEBooks.getSelectedItem();
                                 books.remove(temp);
                                 if(studentNameField.getText().equals("")){
@@ -680,14 +709,17 @@ public class GUI extends Frame  {
                                 if(sentinel == true){
                                     return;
                                 }
+                                //Updates the E-Book for an E-Book that has no owner.
                                 if(temp.getRedemptionStatus() == false){
+                                    redemptionCodes.remove(temp.getRedemptionCode()+",");
                                     unredeemedEBooks.remove(temp);
                                     temp.setBookName(nameField.getText());
                                     temp.setClassFor(classForField.getText());
                                     temp.setRedemptionCode(redemptionCodeField.getText());
                                     temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                     temp.setOwner(new Student(studentNameField.getText(), Integer.parseInt(gradeLevelField.getText())));
-                                    books.put(temp);                                    
+                                    books.put(temp);
+                                    redemptionCodes.put(redemptionCodeField.getText()+",");
                                     DefaultTableModel table = (DefaultTableModel)database.getModel();
                                     table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                     table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);
@@ -697,7 +729,9 @@ public class GUI extends Frame  {
                                     table.setValueAt(gradeLevelField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 5);
                                     dispose();
                                 }
-                                else {                                  
+                                //Updates the E-Book if the E-Book already has an owner.
+                                else {
+                                    redemptionCodes.remove(temp.getRedemptionCode()+",");
                                     temp.setBookName(nameField.getText());
                                     temp.setClassFor(classForField.getText());
                                     temp.setRedemptionCode(redemptionCodeField.getText());
@@ -705,6 +739,7 @@ public class GUI extends Frame  {
                                     temp.setRedemptionStatus(Boolean.parseBoolean(redemptionStatusComboBox.getSelectedItem().toString()));
                                     temp.setOwner(new Student(studentNameField.getText(), Integer.parseInt(gradeLevelField.getText())));
                                     books.put(temp);
+                                    redemptionCodes.put(redemptionCodeField.getText()+",");
                                     DefaultTableModel table = (DefaultTableModel)database.getModel();
                                     table.setValueAt(nameField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 0);
                                     table.setValueAt(classForField.getText(), inputedEBook.getRowLocation() - numberOfRowsRemoved, 1);
@@ -735,7 +770,7 @@ public class GUI extends Frame  {
     }
 
 
-
+    //Error window that appears with different text to state the error.
     private class errorWindow extends Frame{
         private Panel errorPanel;
         private Label errorMessage;
@@ -752,7 +787,7 @@ public class GUI extends Frame  {
                     dispose();
                 }    
             });
-
+            //Creates the panel that holds the text of what the error is and a button to close it.
             errorPanel = new Panel(new GridLayout(2,1));
 
             this.errorMessage = new Label(errorMessage);
@@ -772,6 +807,7 @@ public class GUI extends Frame  {
         }
     }
 
+    //Creates a frame that tells the user that a report has been created.
     private class reportWindow extends Frame{
         private Panel reportPanel;
         private Label reportMessage;
@@ -808,6 +844,7 @@ public class GUI extends Frame  {
         }
     }
 
+    //Creates the instance of the GUI.
     public static void main(String args[]) throws IOException {
         GUI app = new GUI();
     }
