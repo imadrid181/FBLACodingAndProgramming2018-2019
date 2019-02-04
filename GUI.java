@@ -217,7 +217,7 @@ public class GUI extends Frame  {
                 while((current = bookReader.readLine()) != null ){
                     String[] tokens = current.split(",");
                     reportWriter.write(tokens[0].trim()+" for "+tokens[1].trim()+" with redemption Code "+tokens[2].trim()+
-                                       "is assigned to "+tokens[4].trim()+" who is in "+tokens[5].trim()+" grade.");
+                                       " is assigned to "+tokens[4].trim()+" who is in "+tokens[5].trim()+" grade.");
                     reportWriter.write(System.lineSeparator());
                     reportWriter.flush();
                 }
